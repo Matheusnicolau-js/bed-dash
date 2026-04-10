@@ -1,0 +1,72 @@
+html,body {
+
+	background: linear-gradient(to left, rgb(40, 40, 100), rgb(20, 20, 50));
+
+}
+
+.game{
+
+	background: linear-gradient(to right, rgb(50, 50, 50), rgb(200, 200, 200));
+	position: absolute;
+
+}
+
+.direita {
+
+	position: absolute;
+	top:45vh;
+	left: 3vh;
+	width: 13vh;
+	height: 13vh;
+	border-radius: 15px;
+	border: 10px solid red;
+	background-color: darkred;
+	opacity: 0.4;
+
+}
+
+.direita:active {
+
+	border-color: darkred;
+
+}
+
+.esquerda {
+
+	position: absolute;
+	top:45vh;
+	left: 17vh;
+	width: 13vh;
+	height: 13vh;
+	border-radius: 15px;
+	border: 10px solid blue;
+	background-color: darkblue;
+	opacity: 0.4;
+
+}
+
+.esquerda:active {
+
+	border-color: darkblue;
+
+}
+
+.action {
+
+	position: absolute;
+	left: 100vh;
+	top: 43vh;
+	width: 15vh;
+	height: 15vh;
+	border-radius: 15px;
+	border: 10px solid green;
+	background-color: darkgreen;
+	opacity: 0.4;
+
+}
+
+.action:active {
+
+	border-color: darkgreen;
+
+}
