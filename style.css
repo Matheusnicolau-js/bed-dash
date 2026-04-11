@@ -14,10 +14,10 @@ html,body {
 .direita {
 
 	position: absolute;
-	top:45vh;
+	top:60vh;
 	left: 3vh;
-	width: 13vh;
-	height: 13vh;
+	width: 23vh;
+	height: 23vh;
 	border-radius: 15px;
 	border: 10px solid red;
 	background-color: darkred;
@@ -34,10 +34,10 @@ html,body {
 .esquerda {
 
 	position: absolute;
-	top:45vh;
-	left: 17vh;
-	width: 13vh;
-	height: 13vh;
+	top:60vh;
+	left: 27vh;
+	width: 23vh;
+	height: 23vh;
 	border-radius: 15px;
 	border: 10px solid blue;
 	background-color: darkblue;
@@ -54,10 +54,10 @@ html,body {
 .action {
 
 	position: absolute;
-	left: 100vh;
-	top: 43vh;
-	width: 15vh;
-	height: 15vh;
+	left: 170vh;
+	top: 58vh;
+	width: 25vh;
+	height: 25vh;
 	border-radius: 15px;
 	border: 10px solid green;
 	background-color: darkgreen;
@@ -68,5 +68,14 @@ html,body {
 .action:active {
 
 	border-color: darkgreen;
+
+}
+
+.reset {
+
+	width: 160;
+	height: 80;
+	border-radius: 15px;
+	border: 10px solid rgb(190, 190, 190);
 
 }
