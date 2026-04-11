@@ -132,6 +132,10 @@ if (version == false) {
 	document.addEventListener("keydown", e => teclas[e.key] = true)
 	document.addEventListener("keyup", e => teclas[e.key] = false)
 
+	direita_button.style.opacity = 0
+	esquerda_button.style.opacity = 0
+	action_button.style.opacity = 0
+
 }
 
 function level_1() {
