@@ -110,7 +110,7 @@ let objetos
 let spikes
 
 const teclas = {}
-let inputs = ["d", "a", "w"]
+let inputs = ["d", "a", "w", "r"]
 
 if (version == false) {
 
@@ -156,7 +156,8 @@ function level_1() {
 		vspd:0,
 		grav:8,
 		kilos:0.8,
-		jump_force:-15
+		jump_force:-15,
+		dead:false
 
 	}
 
@@ -266,7 +267,7 @@ function update() {
 
 				if (objetos[i].type == "spike") {
 
-					player.spd = 0
+					/*player.spd = 0
 					player.hspd = 0
 					player.vspd = 0
 					teclas[inputs[0]] = false
@@ -276,17 +277,9 @@ function update() {
 
 						draw_cube(objetos[i].x, objetos[i].y, objetos[i].width, objetos[i].height, objetos[i].color, 0.5, false, 0, 0)
 
-					}
+					}*/
 
 				}
-
-			})
-
-		}
-
-		for (let i = 0; i < objetos.length; i++) {
-
-			colisao(player.x, player.y, player.width, player.height, objetos[i].x, objetos[i].y, objetos[i].width, objetos[i].height, function() {
 
 				if (teclas[inputs[2]] && objetos[i].type == "orb") {
 
