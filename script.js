@@ -1,7 +1,7 @@
 const canvas = document.querySelector(".game")
 const ctx = canvas.getContext("2d") //configurando o canvas
 
-const cenas = ["level_1"]
+const cenas = ["level_teste_1", "level_teste_2"]
 let cena_atu = cenas[0]
 
 const direita_button = document.querySelector(".direita")
@@ -12,20 +12,23 @@ let version = window.confirm("você está jogando num pc?")
 
 //texturas
 
-let player_skin_1 = new Image
+const player_skin_1 = new Image
 player_skin_1.src = "static/player_1.png"
 
-let yellow_orb_skin_1 = new Image
+const yellow_orb_skin_1 = new Image
 yellow_orb_skin_1.src = "static/yellow_orb.png"
 
-let pink_orb_skin_1 = new Image
+const pink_orb_skin_1 = new Image
 pink_orb_skin_1.src = "static/pink_orb.png"
 
-let orange_orb_skin_1 = new Image
+const orange_orb_skin_1 = new Image
 orange_orb_skin_1.src = "static/orange_orb.png"
 
-let spike_skin_1 = new Image
+const spike_skin_1 = new Image
 spike_skin_1.src = "static/spike_1.png"
+
+const end_skin_1 = new Image
+end_skin_1.src = "static/end_skin_1.png"
 
 function draw_cube(x, y, width, height, color, alpha, contorno, stroke_color, stroke_size) {
 
@@ -104,6 +107,64 @@ function draw_alto_x_img(image, x, y, width, height, alpha, intervalo, number) {
 
 // verifica se há colisão
 
+let transicao = {
+
+	x:0,
+	y:0,
+	width:canvas.width,
+	height:canvas.height,
+	alpha:10,
+	color:"black",
+	transi_num:2,
+	funcao:null,
+	vel:1,
+	fede_in() {
+
+		teclas[""] = false
+
+		if (transicao.alpha < 10) {
+
+			transicao.alpha+=transicao.vel
+
+		}else if (transicao.alpha == 10) {
+
+			if (transicao.funcao != null) {
+
+				transicao.funcao()
+
+			}
+
+			transicao.transi_num = 0
+			transicao.funcao = null
+
+		}
+	
+	},
+	fede_out() {
+
+		teclas[""] = false
+
+		if (transicao.alpha > 0) {
+
+			transicao.alpha-=transicao.vel
+
+		}else if (transicao.alpha == 0) {
+
+			if (transicao.funcao != null) {
+
+				transicao.funcao()
+
+			}
+
+			transicao.transi_num = 0
+			transicao.funcao = null
+
+		}
+
+	}
+
+}
+
 let player
 let blocos
 let objetos
@@ -127,7 +188,7 @@ if (version == false) {
 	action_button.addEventListener("touchstart", function() {teclas[inputs[2]] = true})
 	action_button.addEventListener("touchend", function() {teclas[inputs[2]] = false})
 
-}else{
+}else if (version == true) {
 
 	document.addEventListener("keydown", e => teclas[e.key] = true)
 	document.addEventListener("keyup", e => teclas[e.key] = false)
@@ -135,6 +196,10 @@ if (version == false) {
 	direita_button.style.opacity = 0
 	esquerda_button.style.opacity = 0
 	action_button.style.opacity = 0
+
+}else{
+
+	location.reload()
 
 }
 
@@ -157,7 +222,30 @@ function level_1() {
 		grav:8,
 		kilos:0.8,
 		jump_force:-15,
-		dead:false
+		dead:false,
+		morrer() {
+
+			if (player.dead == false) {
+
+				player.dead = true
+
+				setTimeout(function() {location.reload()}, 3000);
+
+				player.spd = 0
+				player.grav = 0
+				player.kilos = 0
+				player.hspd = 0
+				player.vspd = 0
+						
+				for (let i = 0; i < objetos.length; i++) {
+
+					objetos[i].hitalpha = 0.5
+
+				}
+
+			}
+
+		}
 
 	}
 
@@ -171,10 +259,11 @@ function level_1() {
 
 	objetos = [
 
-		{x:700, y:320, width:60, height:60, color:"green", alpha:1, orb_force:-15, type:"orb"},
-		{x:300, y:250, width:60, height:60, color:"green", alpha:1, orb_force:-10, type:"orb"},
-		{x:500, y:380, width:60, height:60, color:"green", alpha:1, orb_force:-20, type:"orb"},
-		{x:260, y:490, width:530, height:40, color:"red", alpha:1, type:"spike"}
+		{x:700, y:320, width:60, height:60, color:"green", alpha:1, orb_force:-15, type:"orb", hitalpha:0}, //0
+		{x:300, y:250, width:60, height:60, color:"green", alpha:1, orb_force:-10, type:"orb", hitalpha:0}, //1
+		{x:500, y:380, width:60, height:60, color:"green", alpha:1, orb_force:-20, type:"orb", hitalpha:0}, //2
+		{x:260, y:490, width:530, height:40, color:"red", alpha:1, type:"spike", hitalpha:0},               //3
+		{x:850, y:220, width:70, height:95, color:"black", alpha:1, destino_cena:1, type:"end", hitalpha:0} //4
 
 	]
 
@@ -194,7 +283,7 @@ function draw() {
 
 		for (let i = 0; i <= objetos.length-1; i++) {
 
-			draw_cube(objetos[i].x, objetos[i].y, objetos[i].width, objetos[i].height, objetos[i].color, 0, false, 0, 0)
+			draw_cube(objetos[i].x, objetos[i].y, objetos[i].width, objetos[i].height, objetos[i].color, objetos[i].hitalpha, false, 0, 0)
 
 		}
 
@@ -204,15 +293,22 @@ function draw() {
 		draw_image(pink_orb_skin_1, objetos[1].x, objetos[1].y, objetos[1].width, objetos[1].height, objetos[1].alpha)
 		draw_image(orange_orb_skin_1, objetos[2].x, objetos[2].y, objetos[2].width, objetos[2].height, objetos[2].alpha)
 
+		draw_image(end_skin_1, objetos[4].x, objetos[4].y, objetos[4].width, objetos[4].height, objetos[4].alpha)
+
 		draw_alto_x_img(spike_skin_1, 251, 475, 75, 75, 1, 79, 7)
 
 		draw_image(player_skin_1, player.x, player.y, player.width, player.height, player.alpha)
 
 	}
 
+	draw_cube(transicao.x, transicao.y, transicao.width, transicao.height, transicao.color, transicao.alpha/10,false,0,0)
+
 }
 
 function update() {
+
+	if (transicao.transi_num == 1) {transicao.fede_in()}
+	else if (transicao.transi_num == 2) {transicao.fede_out()}
 
 	if (cena_atu == cenas[0]) {
 
@@ -222,14 +318,17 @@ function update() {
 		player.x += player.hspd
 		player.y += player.vspd
 
+		if (player.x >= canvas.width) {player.morrer()}
+		else if (player.x <= -player.width){player.morrer()}
+
+		if (player.y >= canvas.height) {player.morrer()}
+		else if (player.y <= -player.height){player.morrer()}
+
 		if (teclas[inputs[0]] == true) {
 
 			if (player.hspd != player.spd) {
 
 				player.hspd+=player.acc
-
-
-
 
 			}
 
@@ -265,25 +364,27 @@ function update() {
 
 			colisao(player.x, player.y, player.width, player.height, objetos[i].x, objetos[i].y, objetos[i].width, objetos[i].height, function() {
 
-				if (objetos[i].type == "spike") {
+				if (objetos[i].type == "spike" && player.dead == false) {
 
-					/*player.spd = 0
-					player.hspd = 0
-					player.vspd = 0
-					teclas[inputs[0]] = false
-					teclas[inputs[1]] = false
-					teclas[inputs[2]] = false
-					for (let i = 0; i <= objetos.length-1; i++) {
-
-						draw_cube(objetos[i].x, objetos[i].y, objetos[i].width, objetos[i].height, objetos[i].color, 0.5, false, 0, 0)
-
-					}*/
+					player.morrer()
 
 				}
 
 				if (teclas[inputs[2]] && objetos[i].type == "orb") {
 
 					player.vspd = objetos[i].orb_force
+
+				}
+
+				if (objetos[i].type == "end") {
+
+					transicao.funcao = function () {
+
+						cena_atu = cenas[1]
+
+					}
+
+					transicao.transi_num = 1
 
 				}
 
