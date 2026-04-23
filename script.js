@@ -72,24 +72,6 @@ function colisao(obj1_x, obj1_y, obj1_width, obj1_height,obj2_x, obj2_y, obj2_wi
 
 }
 
-function colisao_adv(obj1_x, obj1_y, obj1_width, obj1_height,obj2_x, obj2_y, obj2_width, obj2_height, funcao1, funcao2) {
-
-	if (obj1_x < obj2_x + obj2_width &&
-		obj1_x + obj1_width > obj2_x &&
-		obj1_y < obj2_y + obj2_height &&
-		obj1_y + obj1_height > obj2_y
-		) {
-
-		funcao1()
-
-	}else{
-
-		funcao2()
-
-	}
-
-}
-
 function draw_alto_x_img(image, x, y, width, height, alpha, intervalo, number) {
 
 	let inter = intervalo
@@ -168,16 +150,17 @@ let transicao = {
 let player
 let blocos
 let objetos
-let spikes
+let camera
+let estados
 
 const teclas = {}
 let inputs = ["d", "a", "w", "r"]
 
-if (version == false) {
+canvas.style.width = "85vw"
+canvas.style.height = "auto"
+canvas.style.maxHeight = "100vh"
 
-	canvas.style.width = "100vw"
-	canvas.style.height = "auto"
-	canvas.style.maxHeight = "100vh"
+if (version == false) {
 
 	direita_button.addEventListener("touchstart", function() {teclas[inputs[1]] = true})
 	direita_button.addEventListener("touchend", function() {teclas[inputs[1]] = false})
@@ -204,24 +187,38 @@ if (version == false) {
 }
 
 function level_1() {
+
+	estados = {
+
+		gravity:1,
+		speed:5,
+		prev:[1,5]
+
+	}
 	
+	camera = {
+
+		x:0,
+		y:-100,
+		spd:5,
+		acc:0.5,
+		prevX:0,
+		prevY:0,
+		hspd:0,
+		vspd:0,
+		grav:8,
+		kilos:0.8
+
+	}
+
 	player = {
 
-		x:150,
-		y:150,
-		prevX:250,
-		prevY:350,
+		x:500,
+		y:300,
 		width:65,
 		height:65,
 		alpha:1,
-		spd:4,
-		hspd:0,
-		acc:0.25,
-		dcc:0.125,
-		vspd:0,
-		grav:8,
-		kilos:0.8,
-		jump_force:-15,
+		jump_force:-15 * estados.gravity,
 		dead:false,
 		morrer() {
 
@@ -229,13 +226,13 @@ function level_1() {
 
 				player.dead = true
 
-				setTimeout(function() {location.reload()}, 3000);
+				setTimeout(function() {level_1()}, 3000);
 
-				player.spd = 0
-				player.grav = 0
-				player.kilos = 0
-				player.hspd = 0
-				player.vspd = 0
+				camera.spd = 0
+				camera.grav = 0
+				camera.kilos = 0
+				camera.hspd = 0
+				camera.vspd = 0
 						
 				for (let i = 0; i < objetos.length; i++) {
 
@@ -251,19 +248,22 @@ function level_1() {
 
 	blocos = [
 
-		{x:0, y:550, width:1000, height:50, color:"black", alpha:1}, //chão
-		{x:0, y:300, width:250, height:250, color:"black", alpha:1},
-		{x:800, y:350, width:200, height:200, color:"black", alpha:1}
+		{inicial:[-500, 550],x:-500, y:550, width:2800, height:500, color:"black", alpha:1}, //chão
+		{inicial:[310, 300],x:310, y:300, width:250, height:250, color:"black", alpha:1},
+		{inicial:[1110, 350],x:1110, y:350, width:350, height:200, color:"black", alpha:1},
+		{inicial:[1460, -200],x:1460, y:-150, width:300, height:800, color:"black", alpha:1},
+		{select:0}
 
 	]
 
 	objetos = [
 
-		{x:700, y:320, width:60, height:60, color:"green", alpha:1, orb_force:-15, type:"orb", hitalpha:0}, //0
-		{x:300, y:250, width:60, height:60, color:"green", alpha:1, orb_force:-10, type:"orb", hitalpha:0}, //1
-		{x:500, y:380, width:60, height:60, color:"green", alpha:1, orb_force:-20, type:"orb", hitalpha:0}, //2
-		{x:260, y:490, width:530, height:40, color:"red", alpha:1, type:"spike", hitalpha:0},               //3
-		{x:850, y:220, width:70, height:95, color:"black", alpha:1, destino_cena:1, type:"end", hitalpha:0} //4
+		{inicial:[1010, 320],x:1010, y:320, width:60, height:60, color:"green", alpha:1, orb_force:-15*estados.gravity, type:"orb", hitalpha:0}, //0
+		{inicial:[610, 250],x:610, y:250, width:60, height:60, color:"green", alpha:1, orb_force:-10*estados.gravity, type:"orb", hitalpha:0}, //1
+		{inicial:[810, 380],x:810, y:380, width:60, height:60, color:"green", alpha:1, orb_force:-20*estados.gravity, type:"orb", hitalpha:0}, //2
+		{inicial:[570, 490],x:570, y:490, width:530, height:40, color:"red", alpha:1, type:"spike", hitalpha:0},               //3
+		{inicial:[1300, 220],x:1300, y:220, width:70, height:95, color:"black", alpha:1, destino_cena:1, type:"end", hitalpha:0}, //4
+		{inicial:[-500, 490],x:-500, y:490, width:800, height:40, color:"red", alpha:1, type:"spike", hitalpha:0},               //5
 
 	]
 
@@ -295,7 +295,9 @@ function draw() {
 
 		draw_image(end_skin_1, objetos[4].x, objetos[4].y, objetos[4].width, objetos[4].height, objetos[4].alpha)
 
-		draw_alto_x_img(spike_skin_1, 251, 475, 75, 75, 1, 79, 7)
+		draw_alto_x_img(spike_skin_1, 561  - camera.x, 475  - camera.y, 75, 75, 1, 79, 7)
+
+		draw_alto_x_img(spike_skin_1, -475  - camera.x, 475  - camera.y, 75, 75, 1, 79, 10)
 
 		draw_image(player_skin_1, player.x, player.y, player.width, player.height, player.alpha)
 
@@ -307,16 +309,22 @@ function draw() {
 
 function update() {
 
+	console.clear()
+	console.log(camera.x)
+	console.log(camera.y)
+	console.log(camera.hspd)
+	console.log(camera.vspd)
+
 	if (transicao.transi_num == 1) {transicao.fede_in()}
 	else if (transicao.transi_num == 2) {transicao.fede_out()}
 
 	if (cena_atu == cenas[0]) {
 
-		player.prevX = player.x
-		player.prevY = player.y
+		camera.prevX = camera.x
+		camera.prevY = camera.y
 
-		player.x += player.hspd
-		player.y += player.vspd
+		camera.x = Math.floor(camera.x) + camera.hspd
+		camera.y = Math.floor(camera.y) + camera.vspd
 
 		if (player.x >= canvas.width) {player.morrer()}
 		else if (player.x <= -player.width){player.morrer()}
@@ -326,41 +334,41 @@ function update() {
 
 		if (teclas[inputs[0]] == true) {
 
-			if (player.hspd != player.spd) {
+			if (camera.hspd != camera.spd) {
 
-				player.hspd+=player.acc
+				camera.hspd+=camera.acc
 
 			}
 
 		}else if (teclas[inputs[1]] == true) {
 
-			if (player.hspd != -player.spd) {
+			if (camera.hspd != -camera.spd) {
 
-				player.hspd-=player.acc
-
-			}
-
-		}else{
-
-			if (player.hspd > 0) {
-
-				player.hspd-=player.dcc
-
-			}else if(player.hspd < 0) {
-
-				player.hspd+=player.dcc
+				camera.hspd-=camera.acc
 
 			}
+
+		}else if (teclas[inputs[0]] == false && teclas[inputs[0]] == false) {
+
+			if (camera.hspd > 0) { camera.hspd -= camera.acc }
+			else if (camera.hspd < 0) { camera.hspd += camera.acc }
 
 		}
 
-		if (player.vspd != player.grav) {
+		if (camera.vspd != camera.grav) {
 
-			player.vspd += player.kilos
+			camera.vspd += camera.kilos
 
 		}
 
 		for (let i = 0; i < objetos.length; i++) {
+
+			if (objetos[i].inicial != undefined) {
+
+				objetos[i].x = objetos[i].inicial[0] - camera.x
+				objetos[i].y = objetos[i].inicial[1] - camera.y	
+
+			}
 
 			colisao(player.x, player.y, player.width, player.height, objetos[i].x, objetos[i].y, objetos[i].width, objetos[i].height, function() {
 
@@ -372,7 +380,7 @@ function update() {
 
 				if (teclas[inputs[2]] && objetos[i].type == "orb") {
 
-					player.vspd = objetos[i].orb_force
+					camera.vspd = objetos[i].orb_force
 
 				}
 
@@ -394,36 +402,48 @@ function update() {
 
 		for (let i = 0; i < blocos.length; ++i) {
 
+			if (blocos[i].inicial != undefined) {
+
+				blocos[i].x = blocos[i].inicial[0] - camera.x
+				blocos[i].y = blocos[i].inicial[1] - camera.y
+
+			}
+
+			blocos[3].select = i
+
 			colisao(player.x, player.y, player.width, player.height, blocos[i].x, blocos[i].y, blocos[i].width, blocos[i].height, function () {
 
-				if (player.prevX + player.width <= blocos[i].x) {
+				console.log("colidiu")
 
-					player.x = blocos[i].x - player.width
-					player.hspd = 0
+				if (player.x + player.width <= blocos[i].inicial[0] - camera.prevX) {
 
-				}else if (player.prevX >= blocos[i].x + blocos[i].width) {
+					camera.x -= Math.floor((player.x + player.width) - blocos[i].x)
+					camera.hspd = 0
 
-					player.x = blocos[i].x + blocos[i].width
-					player.hspd = 0
+				}else if (player.x >= (blocos[i].inicial[0] - camera.prevX) + blocos[i].width) {
+
+					camera.x += Math.floor((blocos[i].x + blocos[i].width) - player.x)
+					camera.hspd = 0
 
 				}
 
-				if (player.prevY + player.height <= blocos[i].y) {
+				if (player.y + player.height <= blocos[i].inicial[1] - camera.prevY) {
 
-					player.y = blocos[i].y - player.height
-					player.vspd = 0
+					camera.y -= Math.floor((player.y + player.height) - blocos[i].y)
+
+					camera.vspd = 0
 
 					if (teclas[inputs[2]]) {
 
-						player.vspd = player.jump_force
+						camera.vspd = player.jump_force
 
 					}
 
 
-				}else if (player.prevY >= blocos[i].y + blocos[i].height) {
+				}else if (player.y >= (blocos[i].inicial[1] - camera.prevY) + blocos[i].height) {
 
-					player.y = blocos[i].y + blocos[i].height
-					player.vspd = 0
+					camera.y += Math.floor(player.y - (blocos[i].y + blocos.height))
+					camera.vspd = 0
 
 				}
 
