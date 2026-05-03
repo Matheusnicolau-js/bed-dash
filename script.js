@@ -400,7 +400,7 @@ function level_2() {
 		hitalpha:0,
 		jump_force:-15 * estados.gravity,
 		dead:false,
-		gamemode:1,
+		gamemode:0,
 		algle:0,
 		algle_add:45,
 		chao:true,
