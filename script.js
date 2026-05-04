@@ -13,7 +13,7 @@ let version = window.confirm("você está jogando num pc?")
 //musicas
 
 const level_teste_musi_2 = new Audio
-level_teste_musi_2.src = "static/musics/level_teste_1.mp3"
+level_teste_musi_2.src = "static/musics/level_teste_2.mp3"
 
 //texturas
 
