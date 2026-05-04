@@ -255,8 +255,10 @@ let frames = {atual:1, prev:1}
 let background
 let trigers
 
+let runnig = false
+
 const teclas = {}
-let inputs = ["d", "a", "w", " "]
+let inputs = ["d", "a", "w", " ", "Enter"]
 
 canvas.style.width = "85vw"
 canvas.style.height = "auto"
@@ -376,16 +378,31 @@ function level_2() {
 
 	cena_atu = cenas[1]
 
-	sound(level_teste_musi_2, 0.5, true)
+	if (runnig == false) {
 
-	estados = {
+		estados = {
 
-		gravity:1,
-		speed:1,
-		prev:[1,1]
+			gravity:0,
+			speed:0,
+			prev:[0,0]
+
+		}
+
+	}else{
+
+		estados = {
+
+			gravity:1,
+			speed:1,
+			prev:[1,1]
+
+		}
 
 	}
 	
+	direita_button.style.opacity = 0
+	esquerda_button.style.opacity = 0
+
 	camera = {
 
 		x:0,
@@ -792,10 +809,37 @@ function update() {
 	}else if (cena_atu == cenas[1]) {
 
 		background.x -= camera.hspd/8
-		background.ground[0] -= camera.hspd/12
+		background.ground[0] -= camera.hspd
 
 		if (background.x <= -100) { background.x += 200 }
 		if (background.ground[0] <= -100) { background.ground[0] += 100 }
+
+		if (runnig == false) {
+
+			if (version == true) {
+
+				if (teclas[inputs[3]]) {
+
+					runnig = true
+					level_2()
+					sound(level_teste_musi_2, 0.5, true)
+
+				}
+
+			}else{
+
+				canvas.addEventListener("touchstart", function () {
+
+					sound(level_teste_musi_2, 0.5, true)
+
+					runnig = true
+					level_2()
+
+				})
+
+			}
+
+		}
 
 		frames.prev = frames.atual
 
@@ -894,7 +938,7 @@ function update() {
 
 			}else if (player.gamemode == 1) {
 
-				if (teclas[inputs[3]]) {
+				if (teclas[inputs[3]] || teclas[inputs[2]] && version == false) {
 
 					player.vspd = -camera.grav
 
@@ -937,7 +981,7 @@ function update() {
 
 				}
 
-				if (teclas[inputs[3]] && objetos[i].type == "orb") {
+				if (teclas[inputs[3]] && objetos[i].type == "orb" || teclas[inputs[2]] && objetos[i].type == "orb" && version == false) {
 
 					if (player.gamemode == 0) {
 
@@ -993,7 +1037,7 @@ function update() {
 
 							/*camera.x -= Math.floor((player.x + player.width) - blocos[i].x)
 							camera.hspd = 0*/
-							if (player.gamemode == 0 && player.gamemode == 1) {
+							if (player.gamemode == 0 || player.gamemode == 1) {
 
 								player.morrer()
 
@@ -1048,7 +1092,7 @@ function update() {
 
 								player.vspd = 0
 
-								if (teclas[inputs[3]]) {
+								if (teclas[inputs[3]] || teclas[inputs[2]] && version == false) {
 
 									player.vspd = player.jump_force
 
@@ -1099,11 +1143,7 @@ function loop() {
 
 }
 
-canvas.addEventListener("touchstart", function() {
-
-	level_2()
-	loop()
-
-})
+level_2()
+loop()
 
 alert("funcionou")
