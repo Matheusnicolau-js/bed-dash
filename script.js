@@ -10,6 +10,11 @@ const action_button = document.querySelector(".action")
 
 let version = window.confirm("você está jogando num pc?")
 
+//musicas
+
+const level_teste_musi_2 = new Audio
+level_teste_musi_2.src = "static/musics/level_teste_1.mp3"
+
 //texturas
 
 const player_skin_1 = new Image
@@ -172,6 +177,15 @@ function draw_alto_cube(x, y, width, height, color, alpha, intervalo, number, di
 
 }
 
+function sound(son, volume, loop) {
+
+	son.loop = loop
+	son.volume = volume
+
+	son.play()
+
+}
+
 // verifica se há colisão
 
 let transicao = {
@@ -239,6 +253,7 @@ let camera
 let estados
 let frames = {atual:1, prev:1}
 let background
+let trigers
 
 const teclas = {}
 let inputs = ["d", "a", "w", " "]
@@ -361,6 +376,8 @@ function level_2() {
 
 	cena_atu = cenas[1]
 
+	sound(level_teste_musi_2, 0.5, true)
+
 	estados = {
 
 		gravity:1,
@@ -424,7 +441,7 @@ function level_2() {
 						
 				for (let i = 0; i < objetos.length; i++) {
 
-					objetos[i].hitalpha = 0.5
+					objetos[i].hitalpha = 0.6
 
 				}
 
@@ -436,7 +453,7 @@ function level_2() {
 
 	blocos = [
 
-		{inicial:[null, 500] ,x:0, y:500, width:1000, height:500, color:"black", alpha:1}, //chão
+		{inicial:[null, 500] ,x:0, y:500, width:1000, height:500, color:"black", alpha:0}, //chão
 		{inicial:[1800, 440],x:1800, y:440, width:500, height:60, color:"black", alpha:1},
 		{inicial:[2300, 440],x:2300, y:380, width:700, height:120, color:"black", alpha:1},
 		//{inicial:[3800, 460],x:3800, y:460, width:70, height:100, color:"black", alpha:1},
@@ -461,15 +478,34 @@ function level_2() {
 
 	background = {
 
-		inicial:[50,50],
+		inicial:[50,0],
 		x:50,
-		y:50,
+		y:0,
 		width:100,
 		height:100,
-		color:{c1:[130, 130, 255], c2:[60, 60, 200], c3:[0, 0, 255], all:["", ""]},
+		ground:[0,500, 0.5],
+		color:{c1:[170, 170, 200], c2:[20, 20, 50], c3:[50, 50, 255], c4:[80, 80, 255], c5:[25, 25, 255], c6:[40, 40, 255], all:[]},
 		alpha:0.5,
 		space:200,
-		number:7
+		number:7,
+		draw() {
+
+			draw_alto_cube(background.x, background.y, background.width, background.height, background.color.all[2], background.alpha, background.space, background.number, "x")
+			draw_alto_cube(background.x-100, background.y, background.width, background.height, background.color.all[3], background.alpha, background.space, background.number, "x")
+			draw_alto_cube(background.x-100, background.y+100, background.width, background.height, background.color.all[2], background.alpha, background.space, background.number, "x")
+			draw_alto_cube(background.x, background.y+100, background.width, background.height, background.color.all[3], background.alpha, background.space, background.number, "x")
+			draw_alto_cube(background.x, background.y+200, background.width, background.height, background.color.all[2], background.alpha, background.space, background.number, "x")
+			draw_alto_cube(background.x-100, background.y+200, background.width, background.height, background.color.all[3], background.alpha, background.space, background.number, "x")
+			draw_alto_cube(background.x-100, background.y+300, background.width, background.height, background.color.all[2], background.alpha, background.space, background.number, "x")
+			draw_alto_cube(background.x, background.y+300, background.width, background.height, background.color.all[3], background.alpha, background.space, background.number, "x")
+			draw_alto_cube(background.x, background.y+400, background.width, background.height, background.color.all[2], background.alpha, background.space, background.number, "x")
+			draw_alto_cube(background.x-100, background.y+400, background.width, background.height, background.color.all[3], background.alpha, background.space, background.number, "x")
+			draw_alto_cube(background.ground[0], background.ground[1], background.width/2, background.height/2, background.color.all[4], background.alpha, background.space/2, background.number*2, "x")
+			draw_alto_cube(background.ground[0]+50, background.ground[1], background.width/2, background.height/2, background.color.all[5], background.alpha, background.space/2, background.number*2, "x")
+			draw_alto_cube(background.ground[0]+50, background.ground[1]+50, background.width/2, background.height/2, background.color.all[4], background.alpha, background.space/2, background.number*2, "x")
+			draw_alto_cube(background.ground[0], background.ground[1]+50, background.width/2, background.height/2, background.color.all[5], background.alpha, background.space/2, background.number*2, "x")
+
+		}
 
 	}
 
@@ -512,12 +548,14 @@ function draw() {
 		background.color.all[0] = `${background.color.c1[0]}, ${background.color.c1[1]}, ${background.color.c1[2]}`
 		background.color.all[1] = `${background.color.c2[0]}, ${background.color.c2[1]}, ${background.color.c2[2]}`
 		background.color.all[2] = `rgb(${background.color.c3[0]}, ${background.color.c3[1]}, ${background.color.c3[2]})`
+		background.color.all[3] = `rgb(${background.color.c4[0]}, ${background.color.c4[1]}, ${background.color.c4[2]})`
 
-		canvas.style.background = `linear-gradient(to bottom, rgb(${background.color.all[0]}), rgb(${background.color.all[1]}))`
+		background.color.all[4] = `rgb(${background.color.c5[0]}, ${background.color.c5[1]}, ${background.color.c5[2]})`
+		background.color.all[5] = `rgb(${background.color.c6[0]}, ${background.color.c6[1]}, ${background.color.c6[2]})`
 
-		draw_alto_cube(background.x, background.y, background.width, background.height, background.color.all[2], background.alpha, background.space, background.number, "x")
-		draw_alto_cube(background.x, background.y+background.space, background.width, background.height, background.color.all[2], background.alpha, background.space, background.number, "x")
-		draw_alto_cube(background.x, background.y+background.space*2, background.width, background.height, background.color.all[2], background.alpha, background.space, background.number, "x")
+		canvas.style.background = `linear-gradient(rigth, rgb(${background.color.all[0]}), rgb(${background.color.all[1]}))`
+
+		background.draw()
 
 		for (let i = 0; i <= blocos.length-1; i++) {
 
@@ -754,8 +792,10 @@ function update() {
 	}else if (cena_atu == cenas[1]) {
 
 		background.x -= camera.hspd/8
+		background.ground[0] -= camera.hspd/12
 
 		if (background.x <= -100) { background.x += 200 }
+		if (background.ground[0] <= -100) { background.ground[0] += 100 }
 
 		frames.prev = frames.atual
 
@@ -834,8 +874,6 @@ function update() {
 				if (player.vspd != camera.grav) {
 
 					player.vspd += camera.kilos
-
-					console.log(player.chao)
 
 					if (player.chao == false) {
 
@@ -1061,7 +1099,11 @@ function loop() {
 
 }
 
-level_2()
-loop()
+canvas.addEventListener("touchstart", function() {
+
+	level_2()
+	loop()
+
+})
 
 alert("funcionou")
