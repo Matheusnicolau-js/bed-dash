@@ -423,7 +423,7 @@ function level_2() {
 	player = {
 
 		x:300,
-		y:400,
+		y:435,
 		width:65,
 		height:65,
 		hspd:0,
@@ -436,9 +436,9 @@ function level_2() {
 		dead:false,
 		gamemode:0,
 		algle:0,
-		algle_add:45,
 		chao:true,
 		skin:player_skin_1,
+		skin_info:[65,65,0,0],
 		morrer() {
 
 			if (player.dead == false) {
@@ -455,6 +455,7 @@ function level_2() {
 				player.hspd = 0
 				player.vspd = 0
 				player.hitalpha = 0.5
+				runnig = false
 						
 				for (let i = 0; i < objetos.length; i++) {
 
@@ -471,27 +472,37 @@ function level_2() {
 	blocos = [
 
 		{inicial:[null, 500] ,x:0, y:500, width:1000, height:500, color:"black", alpha:0}, //chão
-		{inicial:[1800, 440],x:1800, y:440, width:500, height:60, color:"black", alpha:1},
-		{inicial:[2300, 440],x:2300, y:380, width:700, height:120, color:"black", alpha:1},
-		//{inicial:[3800, 460],x:3800, y:460, width:70, height:100, color:"black", alpha:1},
+		{inicial:[1700, 440],x:1700, y:440, width:600, height:60, color:"black", alpha:1},
+		{inicial:[2280, 440],x:2280, y:380, width:720, height:120, color:"black", alpha:1},
+		{inicial:[5300, 310],x:5300, y:310, width:600, height:190, color:"black", alpha:1},
+		{inicial:[5300, 0],x:5300, y:0, width:600, height:190, color:"black", alpha:1},
 		{select:0}
 
 	]
 
 	objetos = [
 
-		{inicial:[900, 443],x:900, y:443, width:32, height:45, skin_size:75, color:"red", alpha:1, type:"spike", hitalpha:0},
-		{inicial:[975, 443],x:990, y:443, width:32, height:45, skin_size:75, color:"red", alpha:1, type:"spike", hitalpha:0},
-		{inicial:[2245, 383],x:2245, y:383, width:32, height:45, skin_size:75, color:"red", alpha:1, type:"spike", hitalpha:0},
+		{inicial:[900, 443],x:900, y:443, width:32, height:45, skin_size:75, color:"red", alpha:1, number:2, space:75, type:"mult-spike", hitalpha:0},
+		{inicial:[2230, 383],x:2230, y:383, width:32, height:45, skin_size:75, color:"red", alpha:1, type:"spike", hitalpha:0},
 		{inicial:[2555, 323],x:2555, y:323, width:32, height:45, skin_size:75, color:"red", alpha:1, type:"spike", hitalpha:0},
 		{inicial:[2555, 323],x:2555, y:323, width:32, height:45, skin_size:75, color:"red", alpha:1, type:"spike", hitalpha:0},
 		{inicial:[3030, 440],x:3030, y:440, width:400, height:45, skin_size:75, color:"red", alpha:1, number:6, space:75,type:"mult-spike", hitalpha:0},
 		{inicial:[3150, 240],x:3150, y:240, width:60, height:60, color:"green", alpha:1, orb_force:-15 * estados.gravity, type:"orb", skin:yellow_orb_skin_1, hitalpha:0},
 		{inicial:[3600, 360],x:3600, y:360, width:60, height:140, color:"green", alpha:1, speed:12*estados.speed,type:"speed-portal", skin:speed_portal_skin_2, hitalpha:0},
 		{inicial:[4000, 440],x:4000, y:440, width:180, height:45, skin_size:75, color:"red", alpha:1, number:3, space:75,type:"mult-spike", hitalpha:0},
-		{inicial:[4300, 360],x:4300, y:360, width:60, height:140, color:"green", alpha:1, speed:8*estados.speed,type:"speed-portal", skin:speed_portal_skin_1, hitalpha:0}
+		{inicial:[4300, 360],x:4300, y:360, width:60, height:140, color:"green", alpha:1, speed:8*estados.speed,type:"speed-portal", skin:speed_portal_skin_1, hitalpha:0},
+		{inicial:[4500, 440],x:4500, y:360, width:60, height:60, color:"green", alpha:1, orb_force:-20 * estados.gravity, type:"orb", skin:orange_orb_skin_1, hitalpha:0},
+		{inicial:[4620, 440],x:4620, y:440, width:400, height:45, skin_size:75, color:"red", alpha:1, number:6, space:75,type:"mult-spike", hitalpha:0},
+		{inicial:[4680, 130],x:4680, y:130, width:132, height:140, color:"green", alpha:1, speed:16*estados.speed,type:"speed-portal", skin:speed_portal_skin_3, hitalpha:0},
+		{inicial:[4690, 135],x:4690, y:135, width:120, height:140, color:"green", alpha:1,type:"wave-portal", skin:wave_portal_1, hitalpha:0}
 
 	]
+
+	/*trigers = [
+
+		{type:"move", x:5000}
+
+	]*/
 
 	background = {
 
@@ -590,11 +601,7 @@ function draw() {
 
 				draw_alto_x_img(spike_skin_1 , objetos[i].x-20, objetos[i].y-15, objetos[i].skin_size, objetos[i].skin_size, objetos[i].alpha, objetos[i].space, objetos[i].number)
 
-			}else if (objetos[i].type == "orb") {
-
-				draw_image(objetos[i].skin, objetos[i].x, objetos[i].y, objetos[i].width, objetos[i].height, objetos[i].alpha)
-
-			}else if (objetos[i].type == "speed-portal") {
+			}else{
 
 				draw_image(objetos[i].skin, objetos[i].x, objetos[i].y, objetos[i].width, objetos[i].height, objetos[i].alpha)
 
@@ -604,7 +611,7 @@ function draw() {
 
 		}
 
-		draw_image(player.skin, player.x, player.y, player.width, player.height, player.alpha, player.algle, player.x + player.width/2, player.y + player.height/2)
+		draw_image(player.skin, player.x-player.skin_info[2], player.y-player.skin_info[3], player.skin_info[0], player.skin_info[1], player.alpha, player.algle, player.x + player.width/2, player.y + player.height/2)
 
 		draw_cube(player.x, player.y, player.width, player.height, "orange", player.hitalpha, false,0,0)
 
@@ -818,11 +825,11 @@ function update() {
 
 			if (version == true) {
 
-				if (teclas[inputs[3]]) {
+				if (teclas[inputs[3]] && runnig == false) {
 
 					runnig = true
 					level_2()
-					sound(level_teste_musi_2, 0.5, true)
+					sound(level_teste_musi_2, 0.67, true)
 
 				}
 
@@ -830,10 +837,14 @@ function update() {
 
 				canvas.addEventListener("touchstart", function () {
 
-					sound(level_teste_musi_2, 0.5, true)
+					if (runnig == false) {
 
-					runnig = true
-					level_2()
+						sound(level_teste_musi_2, 0.5, true)
+
+						runnig = true
+						level_2()
+
+					}
 
 				})
 
@@ -849,23 +860,25 @@ function update() {
 
 		}
 
-		if (player.gamemode == 0) {
+		/*if (player.gamemode == 0 && player.prevMode != 0) {
 
-			player.grav = 8*estados.gravity
+			camera.grav = 8*estados.gravity
 			player.skin = player_skin_1
 			player.width = 65
 			player.height = 65
 			player.algle_add = 15
+			player.algle = 0
 
-		}else if (player.gamemode == 1) {
+		}else if (player.gamemode == 1 && player.prevMode != 1) {
 
-			player.grav = 3*estados.gravity
+			camera.grav = 4*estados.gravity
 			player.skin = wave_skin_1
 			player.width = 60
 			player.height = 60
 			player.algle_add = 45/2
+			player.algle = -45
 
-		}
+		}*/
 
 		if (camera.canmoveX == true) {
 
@@ -898,7 +911,7 @@ function update() {
 
 		if (player.y >= canvas.height) {player.morrer()}
 		else if (player.y <= -player.height){player.morrer()}
-
+	
 		if (camera.canmoveY == true) {
 
 			if (player.gamemode == 0) {
@@ -917,44 +930,46 @@ function update() {
 
 				if (player.vspd != camera.grav) {
 
+					camera.grav = 8*estados.gravity
+					player.skin = player_skin_1
+					player.width = 65
+					player.height = 65
+					player.skin_info = [65,65,0,0]
+
 					player.vspd += camera.kilos
 
 					if (player.chao == false) {
 
-						player.algle += player.algle_add
-
-					}else{
-
-						/*if (player.algle > 45 && player.algle < 180) {
-
-							player.algle = 90
-
-						}*/
-
-						player.algle = 0
+						player.algle += 7.5
 
 					}
 				}
 
 			}else if (player.gamemode == 1) {
 
+				camera.grav = 5*estados.gravity
+				player.skin = wave_skin_1
+				player.width = 30
+				player.height = 30
+				player.skin_info = [60,60,30,30]
+
 				if (teclas[inputs[3]] || teclas[inputs[2]] && version == false) {
 
-					player.vspd = -camera.grav
+					player.vspd = -camera.grav-estados.speed/5
 
-					if (player.algle != -45) {
+					if (player.algle != -45 && player.chao == false) {
 
-						player.algle-=45/2
+						player.algle-=45/2.5
 
 					}
 
 				}else{
 
-					player.vspd = camera.grav
+					player.vspd = camera.grav+estados.speed/5
 
-					if (player.algle != 45) {
+					if (player.algle != 45 && player.chao == false) {
 
-						player.algle+=45/2
+						player.algle+=45/2.5
 
 					}
 
@@ -979,9 +994,7 @@ function update() {
 
 					player.morrer()
 
-				}
-
-				if (teclas[inputs[3]] && objetos[i].type == "orb" || teclas[inputs[2]] && objetos[i].type == "orb" && version == false) {
+				}else if (teclas[inputs[3]] && objetos[i].type == "orb" || teclas[inputs[2]] && objetos[i].type == "orb" && version == false) {
 
 					if (player.gamemode == 0) {
 
@@ -990,11 +1003,14 @@ function update() {
 
 					}
 
-				}
-
-				if (objetos[i].type == "speed-portal") {
+				}else if (objetos[i].type == "speed-portal") {
 
 					camera.spd = objetos[i].speed
+
+				}else if (objetos[i].type == "wave-portal") {
+
+					player.algle = -45
+					player.gamemode = 1
 
 				}
 
@@ -1013,6 +1029,8 @@ function update() {
 			})
 
 		}
+
+		player.chao = false
 
 		for (let i = 0; i < blocos.length; ++i) {
 
@@ -1092,6 +1110,34 @@ function update() {
 
 								player.vspd = 0
 
+								player.chao = true
+
+								if (player.algle > 0 && player.algle < 90) {
+
+									if (player.algle >= 45) {player.algle = 90}
+									else if (player.algle < 45) {player.algle = 0}
+
+								}else if (player.algle > 90 && player.algle < 180) {
+
+									if (player.algle >= 135) {player.algle = 180}
+									else if (player.algle < 135) {player.algle = 90}
+
+								}else if (player.algle > 180 && player.algle < 270) {
+
+									if (player.algle >= 225) {player.algle = 270}
+									else if (player.algle < 225) {player.algle = 180}
+
+								}else if (player.algle > 270 && player.algle < 360) {
+
+									if (player.algle >= 315) {player.algle = 0}
+									else if (player.algle < 315) {player.algle = 270}
+
+								}else if (player.algle >= 360) {
+
+									player.algle = 0
+
+								}
+
 								if (teclas[inputs[3]] || teclas[inputs[2]] && version == false) {
 
 									player.vspd = player.jump_force
@@ -1100,7 +1146,19 @@ function update() {
 
 							}else if (player.gamemode == 1) {
 
-								player.morrer()
+								if (i != 0) {
+
+									player.morrer()
+
+								}else{
+
+									player.y -= Math.floor((player.y + player.height) - blocos[i].y)
+
+									player.vspd = 0
+
+									player.chao = true
+
+								}
 
 							}
 
@@ -1116,16 +1174,6 @@ function update() {
 					}
 
 			})
-
-			if (player.y + player.height >= blocos[i].y && player.gamemode == 0) {
-
-				player.chao = true
-
-			}else if (player.y + player.height < blocos[i].y && player.gamemode == 0) {
-
-				player.chao = false
-
-			}
 
 		}
 
